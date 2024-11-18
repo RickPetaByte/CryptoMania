@@ -1,0 +1,28 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Rubik', sans-serif;
+}
+
+body {
+    background-image: url("../img/background_cryptomania.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+}
+
+.navbar_color {
+    background-color: rgba(10, 10, 2, 0.4);
+}
+
+.footer_color {
+    background-color: rgba(10, 10, 2, 0.4);
+}
+
+.login_backcolor {
+    background-color: rgba(41, 42, 27, 0.8);
+}
+
+.hiddenRow {
+    display: none;
+}
