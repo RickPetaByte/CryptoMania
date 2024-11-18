@@ -15,21 +15,20 @@ $(document).ready(function() {
 
 var chartInstance = null;
 
-//use more jquery by some functions is more plain javascript then jquery
+// Get the list of all coins
+function fetchAllCoins(euroToUsdRate) {
 
-const getAllCoins = (euroToUsdRate) => {
-    
-    var settings = {
+	var settings = {
         "url": "https://api.coincap.io/v2/assets",
         "method": "GET",
         "timeout": 0,
     };
-    
+
     $.ajax(settings).done(function (response) {
         
         coins = response;
 
-		console.log(coins.data);
+		//console.log(coins.data);
 
         // Leeg de tabel eerst, zodat er geen dubbele data komt
         $("#characters-table tbody").empty();
@@ -44,9 +43,11 @@ const getAllCoins = (euroToUsdRate) => {
             
             // Gebruik toFixed() om het aantal decimalen te beperken
             let priceUSD = parseFloat(coins.data[i].priceUsd).toFixed(2);
-			//const priceEUR = (parseFloat(coin.priceUsd) * euroToUsdRate).toFixed(2);
-            let marketCap = parseFloat(coins.data[i].marketCapUsd).toFixed(2);
+			let priceEUR = parseFloat(coins.data[i].priceUsd) * euroToUsdRate;
+            let marketCap = parseFloat(coins.data[i].marketCapUsd);
             let hr = parseFloat(coins.data[i].vwap24Hr).toFixed(2);
+			let newMarketCap = marketCap.toFixed(2);
+			let newPriceEUR = priceEUR.toFixed(2);
         
             let moreinfo = `
             <button type='button' 
@@ -56,34 +57,35 @@ const getAllCoins = (euroToUsdRate) => {
                 data-id='${symbol}' 
                 data-name='${name}' 
                 data-price='${priceUSD}'
-				data-eurprice = '${priceEUR}' 
-                data-marketCap='${marketCap}' 
+				data-eurprice = '${newPriceEUR}' 
+                data-marketCap='${newMarketCap}' 
                 data-hr='${hr}'
                 >More info
             </button>`
 
             let cryptofolio = `
-            <button id='addbutton' 
-                type='button'
-                class='btn btn-primary'
-                data-bs-toggle="modal" 
-                data-bs-target="#coinModal"
-                data-name='${name}'
-                data-price='${priceUSD}'
-                >Add
-            </button>
-            `
-            const row = `
-                <tr>
-                    <td><img style='height: 30px' src='${coinLogo}'>${symbol}</td>
-                    <td>${name}</td>
-                    <td>$${priceUSD}</td>
-                    <td>${marketCap}</td>
-                    <td>${hr}</td>
-                    <td>${moreinfo}</td>
-                    <td class='hiddenRow' id='hiddenRow' >${cryptofolio}</td>
-                </tr>
+				<button id='addbutton' 
+					type='button'
+					class='btn btn-primary'
+					data-bs-toggle="modal" 
+					data-bs-target="#coinModal"
+					data-name='${name}'
+					data-price='${priceUSD}'
+					>Add
+				</button>
             `;
+            const row = `
+				<tr>
+					<td><img style='height: 30px' src='${coinLogo}'>${symbol}</td>
+					<td>${name}</td>
+					<td>$${priceUSD}</td>
+					<td>€${newPriceEUR}</td> 
+					<td>${newMarketCap}</td>
+					<td>${hr}</td>
+					<td>${moreinfo}</td>
+					<td class='hiddenRow' id='hiddenRow' >${cryptofolio}</td>
+				</tr>
+			`;
             
             // Voeg de rij toe aan de tbody van de tabel
             $("#characters-table tbody").append(row);
@@ -99,12 +101,10 @@ const getAllCoins = (euroToUsdRate) => {
 			document.getElementById('marketcap').textContent = `$${parseFloat(marketCap).toLocaleString('nl-NL', {useGrouping: false})}`;
 		});
 
-
     });
+}
 
-};
-
-
+//get all exchanges
 const getExchanges = () => {
 	var settings = {
         "url": "https://api.coincap.io/v2/exchanges",
@@ -146,10 +146,9 @@ const getExchanges = () => {
 			$("#exchange").append(exchangerow);
 		}
 	});
-
-
 }
 
+//get all cryptonews
 const getCryptoNews = () => {
 
 	var settings = {
@@ -192,93 +191,6 @@ const getCryptoNews = () => {
 			$("#cryptonews").append(cryptonews);
 		}
 	});
-}
-
-// Get the list of all coins
-function fetchAllCoins(euroToUsdRate) {
-
-	var settings = {
-        "url": "https://api.coincap.io/v2/assets",
-        "method": "GET",
-        "timeout": 0,
-    };
-
-    $.ajax(settings).done(function (response) {
-        
-        coins = response;
-
-		console.log(coins.data);
-
-        // Leeg de tabel eerst, zodat er geen dubbele data komt
-        $("#characters-table tbody").empty();
-
-        for (let i = 0; i < coins.data.length; i++) {
-
-            var coinLogo = `https://assets.coincap.io/assets/icons/${coins.data[i].symbol.toLowerCase()}@2x.png`;
-        
-            let symbol = coins.data[i].symbol;
-            let name = coins.data[i].name;
-            let time = coins.data[i].volumeUsd24Hr;
-            
-            // Gebruik toFixed() om het aantal decimalen te beperken
-            let priceUSD = parseFloat(coins.data[i].priceUsd).toFixed(2);
-			const priceEUR = parseFloat(coins.data[i].priceUsd) * euroToUsdRate.toFixed(2);
-            let marketCap = parseFloat(coins.data[i].marketCapUsd).toFixed(2);
-            let hr = parseFloat(coins.data[i].vwap24Hr).toFixed(2);
-        
-            let moreinfo = `
-            <button type='button' 
-                class='btn btn-primary character-info-btn' 
-                data-bs-toggle="modal" 
-                data-bs-target="#chartModal" 
-                data-id='${symbol}' 
-                data-name='${name}' 
-                data-price='${priceUSD}'
-				data-eurprice = '${priceEUR}' 
-                data-marketCap='${marketCap}' 
-                data-hr='${hr}'
-                >More info
-            </button>`
-
-            let cryptofolio = `
-				<button id='addbutton' 
-					type='button'
-					class='btn btn-primary'
-					data-bs-toggle="modal" 
-					data-bs-target="#coinModal"
-					data-name='${name}'
-					data-price='${priceUSD}'
-					>Add
-				</button>
-            `;
-            const row = `
-				<tr>
-					<td><img style='height: 30px' src='${coinLogo}'>${symbol}</td>
-					<td>${name}</td>
-					<td>$${priceUSD}</td>
-					<td>€${priceEUR}</td> 
-					<td>${marketCap}</td>
-					<td>${hr}</td>
-					<td>${moreinfo}</td>
-					<td class='hiddenRow' id='hiddenRow' >${cryptofolio}</td>
-				</tr>
-			`;
-            
-            // Voeg de rij toe aan de tbody van de tabel
-            $("#characters-table tbody").append(row);
-            
-            toggleRowVisibility();
-        }
-
-		// Event listener toevoegen aan alle 'More info' knoppen
-		$('.character-info-btn').on('click', function() {
-			// Haal de marketCap data op van de geklikte knop
-			const marketCap = $(this).data('marketcap');
-			// Formatteer zonder scheidingstekens voor duizendtallen
-			document.getElementById('marketcap').textContent = `$${parseFloat(marketCap).toLocaleString('nl-NL', {useGrouping: false})}`;
-		});
-
-    });
 }
 
 // Get the Euro to USD conversion rate
@@ -343,11 +255,6 @@ const saveCoinDetails = (coinName, coinPrice, amount, event) => {
 			amount: amount
 		},
 		success: function(response) {
-			// console.log(response);
-			// if (!response.data || response.data.length === 0) {
-			// 	console.error("Geen data ontvangen voor", coinName);
-			// 	return;
-			// }
 
 			let coinmessage = document.getElementById("coinmessage");
 			coinmessage.innerText = "Coin successfully added to the wallet";
@@ -380,14 +287,14 @@ const toggleRowVisibility = () => {
 
 const walletSave = (event) => {
 
-	console.log("TEST");
+	//console.log("TEST");
 
 	let row = event.target.closest('tr');
 	var walletAmount = $(row).find('.walletamount').val();
 	let id = row.querySelector('td').innerText.trim();
 
 	// let walletAmount = $("#walletamount").val();
-	console.log(walletAmount);
+	//console.log(walletAmount);
 
 	$.ajax({
 		type: "POST",
@@ -397,14 +304,14 @@ const walletSave = (event) => {
 			amount: walletAmount,
 		},
 		success: function (data) {
-			console.log(data);
+			//console.log(data);
 			// console.log("amount is geupdate");
 
 			let updateamount = document.getElementById("coinmessage");
 			updateamount.innerText = "Amount successfully edited"
 		},
 		error: function (error) {
-			console.log(`Error ${error}`);
+			//console.log(`Error ${error}`);
 		}
 	})
 	
@@ -415,7 +322,7 @@ const walletDelete = (event) => {
 	const row = event.target.closest('tr');
 	const id = row.querySelector('td').innerText;
 
-	console.log(id);
+	//console.log(id);
 
 	$.ajax({
 		type: "POST",
