@@ -213,7 +213,7 @@
                             <td>" . $row["dates"]. "</td>
                             <td>" . $row["coinname"]. "</td>
                             <td>" . $row["price"]. "</td>
-                            <td><input class='walletamount' value=" . $row['amount'] ." type='number'></td>
+                            <td><input class='walletamount' value=" . $row['amount'] ." type='number' min='0'></td>
                             <td></td>
                             <td><button onclick='walletSave(event)' class='btn btn-warning walletSave'>Save</button></td>
                             <td><button onclick='walletDelete(event)' id='walletDelete' class='btn btn-danger'>Delete</button></td>
@@ -282,7 +282,7 @@
                             <form method="POST" action="/savecoindetails.php">
                                 <span name="currentprice">Current price: <span name="coinprice" id="coinprice"></span> </span> <!-- prijs van de coin -->
                                 <br>
-                                <span id="amount" name="amount">Amount:<input name="amount" id="number" value="1" type="number"></span> <!-- hoeveel coins je wilt kopen -->
+                                <span id="amount" name="amount">Amount:<input name="amount" id="number" value="1" min="0" type="number"></span> <!-- hoeveel coins je wilt kopen -->
                                 <br>
                                 <button id="addbutton" name="addbutton" type="button" class="btn btn-primary">Add</button>
                                 <span class="text-success" id="coinmessage"></span>

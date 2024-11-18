@@ -48,7 +48,8 @@ function fetchAllCoins(euroToUsdRate) {
             let hr = parseFloat(coins.data[i].vwap24Hr).toFixed(2);
 			let newMarketCap = marketCap.toFixed(2);
 			let newPriceEUR = priceEUR.toFixed(2);
-        
+			
+			//more info button
             let moreinfo = `
             <button type='button' 
                 class='btn btn-primary character-info-btn' 
@@ -56,13 +57,14 @@ function fetchAllCoins(euroToUsdRate) {
                 data-bs-target="#chartModal" 
                 data-id='${symbol}' 
                 data-name='${name}' 
-                data-price='${priceUSD}'
+                data-price='$${priceUSD}'
 				data-eurprice = '${newPriceEUR}' 
                 data-marketCap='${newMarketCap}' 
                 data-hr='${hr}'
                 >More info
             </button>`
 
+			//add coins to cryptowallet button
             let cryptofolio = `
 				<button id='addbutton' 
 					type='button'
@@ -70,7 +72,7 @@ function fetchAllCoins(euroToUsdRate) {
 					data-bs-toggle="modal" 
 					data-bs-target="#coinModal"
 					data-name='${name}'
-					data-price='${priceUSD}'
+					data-price='$${priceUSD}'
 					>Add
 				</button>
             `;
